@@ -1,0 +1,16 @@
+GEMINI PRIORITY SETUP
+1. Run ai-priority.sql in Supabase SQL Editor after the department workflow migration.
+2. Supabase > Edge Functions > Secrets: add GEMINI_API_KEY with your Gemini API key.
+   Never put this key in VITE_ environment variables or frontend code.
+3. Create an Edge Function named score-priority and paste functions/score-priority/index.ts into its editor, then deploy.
+   Alternatively: supabase functions deploy score-priority --project-ref xlwkpvjxeremgjzsodfj --no-verify-jwt
+   This function validates the user's bearer token with auth.getUser itself.
+   If deploying in the dashboard, disable the legacy JWT verification option.
+4. Submit a new complaint. It is saved first, then the authenticated frontend requests assessment.
+5. Department admins see AI priority and reason. Assess priority also works on older reports.
+   Failed assessments can be retried after two minutes, up to three attempts per report.
+Model: gemini-3.5-flash-lite.
+Only title, description, category and report type are sent to Gemini. Photos are not analyzed.
+AI suggestions do not complete, reject, or hide reports. Departments still review all reports.
+If the browser closes before requesting scoring, use Assess priority in the department inbox.
+Do not rerun earlier schema-repair scripts after this migration without reviewing permissions/triggers.
